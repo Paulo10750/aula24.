@@ -1,95 +1,297 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
-    <link rel="stylesheet" href="./css/style.css">
-    <title>Aula 22 - Exercício 01</title>
+    <title>Cyber Dark Zone</title>
+    <style>
+        /* Configurações Globais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #050505;
+            font-family: 'Courier New', Courier, monospace;
+            color: #00ff66;
+        }
+
+        /* Efeito de Tremor Genérico (Glitch) */
+        @keyframes screenShake {
+            0% { transform: translate(0, 0) skew(0deg); }
+            10% { transform: translate(-2px, 2px) skew(-1deg); filter: hue-rotate(90deg); }
+            20% { transform: translate(2px, -1px) skew(2deg); }
+            30% { transform: translate(0, 0) skew(0deg); }
+            100% { transform: translate(0, 0) skew(0deg); }
+        }
+
+        .shake-active {
+            animation: screenShake 0.3s infinite;
+        }
+
+        /* Canvas de Fundo (Chuva Matrix) */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.15;
+        }
+
+        /* Contentor dos Elementos a Voar */
+        #particle-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Interface Principal (UI) */
+        .interface {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 40px;
+            border: 2px solid #00ff66;
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
+            backdrop-filter: blur(5px);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ff66;
+        }
+
+        p {
+            font-size: 1rem;
+            margin-bottom: 30px;
+            color: #888;
+        }
+
+        .btn {
+            background: transparent;
+            color: #00ff66;
+            border: 2px solid #00ff66;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
+            pointer-events: auto;
+        }
+
+        .btn:hover {
+            background: #00ff66;
+            color: #050505;
+            box-shadow: 0 0 25px #00ff66;
+            transform: scale(1.05);
+        }
+
+        /* Estilo dos Elementos Voadores */
+        .floating-item {
+            position: absolute;
+            color: #00ff66;
+            font-family: monospace;
+            font-weight: bold;
+            white-space: nowrap;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 5px #00ff66);
+            will-change: transform;
+        }
+    </style>
 </head>
 <body>
-    <main>
-        <section>
-            <h1>Meus Pets</h1>
 
-            <table>
-                <thead>
-                    <tr class="title">
-                        <th>#</th>
-                        <th>Nome</th>
-                        <th>Idade</th>
-                        <th>Raça</th>
-                        <th>Foto</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="centralizar">
-                        <td>1</td>
-                        <td>Chico</td>
-                        <td>6</td>
-                        <td>York Shire</td>
-                        <td width="150px">
-                            <img src="chico.jpg" alt="Imagem cachorro Chico">
-                        </td>
-                        <td width="150px">
-                            <a href="#" class="btn btn-primary">Exibir</a>
-                        </td>
-                    </tr>
-                    <tr class="centralizar">
-                        <td>2</td>
-                        <td>Rickson</td>
-                        <td>2</td>
-                        <td>SRD</td>
-                        <td>
-                            <img src="a4cd7e19abf7631a59c77d7534da7031.gif" alt="Imagem cachorro Rickson">
-                        </td>
-                        <td>
-                            <a href="#" class="btn btn-primary">Exibir</a>
-                        </td>
-                    </tr>
-                </tbody>
-                <tr class="centralizar">
-                    <td>3</td>
-                    <td>Dora</td>
-                    <td>3</td>
-                    <td>York Shire</td>
-                    <td>
-                        <img src="dog.jpg" alt="Imagem cachorro Dora">
-                    </td>
-                    <td>
-                        <a href="#" class="btn btn-primary">Exibir</a>
-                    </td>
-                </tr>
-                <tr class="centralizar">
-                    <td>4</td>
-                    <td>Tyson</td>
-                    <td>7</td>
-                    <td>Dobberman</td>
-                    <td>
-                        <img src="dogge.jpg" alt="Imagem cachorro Tyson">
-                    </td>
-                    <td>
-                        <a href="#" class="btn btn-primary">Exibir</a>
-                    </td>
-                </tr>
-                <tr class="centralizar">
-                    <td>5</td>
-                    <td>Homer</td>
-                    <td>1</td>
-                    <td>Pastor Alemão</td>
-                    <td>
-                        <img src="alvin-david--cHj_FC6ukw-unsplash.jpg" alt="Imagem cachorro Homer">
-                    </td>
-                    <td>
-                        <a href="#" class="btn btn-primary">Exibir</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        </section>
-        </main>
-        </body>
-        </html>
-        
-                
+    <!-- Fundo Estilo Matrix -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <!-- Elementos Voantes -->
+    <div id="particle-container"></div>
+
+    <!-- Conteúdo Central -->
+    <div class="interface" id="mainInterface">
+        <h1>S1ST3M4_C40S</h1>
+        <p>A carregar base de dados encriptada...</p>
+        <button class="btn" onclick="triggerManualGlitch()">Forçar Erro</button>
+    </div>
+
+    <script>
+        // --- 1. CHUVA DIGITAL MATRIX (FUNDO) ---
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const katakana = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1023456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const alphabet = katakana.split('');
+        const fontSize = 16;
+        let columns = canvas.width / fontSize;
+        let rainDrops = Array(Math.floor(columns)).fill(1);
+
+        window.addEventListener('resize', () => {
+            columns = canvas.width / fontSize;
+            rainDrops = Array(Math.floor(columns)).fill(1);
+        });
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet[Math.floor(Math.random() * alphabet.length)];
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        }
+
+        // --- 2. ELEMENTOS VOADORES (PARTÍCULAS COISAS VOANDO) ---
+        const container = document.getElementById('particle-container');
+        const flyItems = ['01', '10', 'ERROR', 'SYSTEM_FAILURE', 'MATRIX', '☣', '☠', '[]', '{ }', 'X', 'Ø', 'RUN'];
+        const activeParticles = [];
+
+        function createParticle() {
+            const el = document.createElement('div');
+            el.classList.add('floating-item');
+            el.innerText = flyItems[Math.floor(Math.random() * flyItems.length)];
+            
+            // Definições iniciais aleatórias
+            const size = Math.random() * (24 - 12) + 12;
+            const startX = Math.random() * window.innerWidth;
+            const startY = window.innerHeight + 50; // Começa abaixo do ecrã
+            
+            el.style.fontSize = `${size}px`;
+            el.style.opacity = Math.random() * (0.9 - 0.4) + 0.4;
+            
+            // Cores aleatórias alternativas (verde escuro, verde claro, branco glitch)
+            const colors = ['#00ff66', '#009933', '#ffffff', '#00ffcc'];
+            el.style.color = colors[Math.floor(Math.random() * colors.length)];
+            if(el.style.color === '#ffffff') {
+                el.style.filter = 'drop-shadow(0 0 5px #ff003c)'; // Glitch vermelho para o branco
+            }
+
+            container.appendChild(el);
+
+            const particleData = {
+                element: el,
+                x: startX,
+                y: startY,
+                speedX: Math.random() * (1.5 - (-1.5)) + (-1.5), // Move-se ligeiramente para os lados
+                speedY: Math.random() * (4 - 1.5) + 1.5, // Velocidade de subida
+                rot: Math.random() * 360,
+                rotSpeed: Math.random() * (2 - (-2)) + (-2)
+            };
+
+            activeParticles.push(particleData);
+        }
+
+        function updateParticles() {
+            for (let i = activeParticles.length - 1; i >= 0; i--) {
+                const p = activeParticles[i];
+                p.y -= p.speedY;
+                p.x += p.speedX;
+                p.rot += p.rotSpeed;
+
+                p.element.style.transform = `translate3d(${p.x}px, ${p.y}px, 0) rotate(${p.rot}deg)`;
+
+                // Remove se sair do ecrã pelo topo ou laterais
+                if (p.y < -50 || p.x < -100 || p.x > window.innerWidth + 100) {
+                    p.element.remove();
+                    activeParticles.splice(i, 1);
+                }
+            }
+        }
+
+        // Controlador de densidade de partículas
+        setInterval(() => {
+            if (activeParticles.length < 40) { // Máximo de 40 itens no ecrã para performance
+                createParticle();
+            }
+        }, 150);
+
+
+        // --- 3. EFEITO DE TREMOR (GLITCH SHAKE) ALEATÓRIO ---
+        const mainUI = document.getElementById('mainInterface');
+        const bodyEl = document.body;
+
+        function triggerGlitchEffect() {
+            // Adiciona a classe de tremor ao body e à interface central
+            bodyEl.classList.add('shake-active');
+            mainUI.style.borderColor = '#ff003c';
+            mainUI.style.boxShadow = '0 0 20px #ff003c';
+            mainUI.style.color = '#ff003c';
+
+            // Altera temporariamente a cor de algumas partículas em tempo real
+            activeParticles.forEach(p => {
+                if(Math.random() > 0.5) p.element.style.color = '#ff003c';
+            });
+
+            // Remove o efeito após 300 milissegundos
+            setTimeout(() => {
+                bodyEl.classList.remove('shake-active');
+                mainUI.style.borderColor = '#00ff66';
+                mainUI.style.boxShadow = '0 0 20px rgba(0, 255, 102, 0.4)';
+                mainUI.style.color = '#00ff66';
+            }, 300);
+        }
+
+        // Dispara o tremor aleatoriamente entre cada 3 a 7 segundos
+        function loopRandomGlitch() {
+            const randomTime = Math.random() * (7000 - 3000) + 3000;
+            setTimeout(() => {
+                triggerGlitchEffect();
+                loopRandomGlitch();
+            }, randomTime);
+        }
+        loopRandomGlitch();
+
+        // Botão para o utilizador forçar o tremor
+        function triggerManualGlitch() {
+            triggerGlitchEffect();
+        }
+
+        // --- 4. LOOP DE ANIMAÇÃO PRINCIPAL (ENGINE) ---
+        function engineLoop() {
+            drawMatrix();
+            updateParticles();
+            requestAnimationFrame(engineLoop);
+        }
+        // Inicia tudo
+        engineLoop();
+    </script>
+</body>
+</html>
